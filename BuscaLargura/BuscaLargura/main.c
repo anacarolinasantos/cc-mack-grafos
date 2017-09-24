@@ -160,12 +160,21 @@ void searchOnWidth(Graph G, vertex s) {
             
             if (nextVertex->colorNode == white) {
                 
-                printf("%d\n", G->adj[nodeQ->num]->distance);
+//                printf("%d\n", G->adj[nodeQ->num]->distance);
                 
+                //Mudando na lista ligada
                 nextVertex->colorNode = gray;
-                nextVertex->distance = G->adj[nextVertex->w]->distance+1;
-//                nextVertex->distance = G->adj[nextVertex->w]->distance+1;
+                nextVertex->distance = G->adj[nodeQ->num]->distance+1;
                 nextVertex->parent = G->adj[nodeQ->num];
+                
+                //Mudando o adj de fato
+                G->adj[nextVertex->w]->colorNode = gray;
+                G->adj[nextVertex->w]->distance = nextVertex->distance;
+                G->adj[nextVertex->w]->parent = nextVertex->parent;
+                
+//                nextVertex->distance = G->adj[nextVertex->w]->distance+1;
+//                nextVertex->distance = G->adj[nextVertex->w]->distance+1;
+//                nextVertex->parent = G->adj[nodeQ->num];
                 
                 insert(queue, nextVertex->w);
             }
