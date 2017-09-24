@@ -24,16 +24,22 @@ typedef struct node *link;
 struct node {
     vertex w;
     link next;
+};
+
+typedef struct vert vert;
+struct vert {
+    vertex v;
     int distance;
-    enum color colorNode;
-    link parent;
+    enum color colorVert;
+    vertex parent;
+    link *adjList;
 };
 
 /* A lista de adjacência de um vértice v é composta por nós do tipo node. Cada nó da lista corresponde a um arco e contém um vizinho w de v e o endereço do nó seguinte da lista. Um link é um ponteiro para um node. */
 typedef struct {
     int V;
     int A;
-    link *adj;
+    vert *vert;
 } *Graph;
 
 //MARK: - Métodos do grafo
@@ -45,22 +51,31 @@ static link NEWedge( vertex w, link next) {
     return a;
 }
 
+vert* NEWvert(vertex v){
+    vert* vertG = (vert*) malloc(sizeof(vert));
+    vertG->v = v;
+    vertG->adjList = NULL;
+    return vertG;
+}
+
 /* REPRESENTAÇÃO POR LISTAS DE ADJACÊNCIA: A função GRAPHinit() constrói um grafo com vértices 0 1 .. V-1 e nenhum arco. */
 Graph GRAPHinit( int V) {
     vertex v;
     Graph G = malloc( sizeof *G);
     G->V = V;
     G->A = 0;
-    G->adj = malloc( V * sizeof (link));
+    
     for (v = 0; v < V; v++){
-//        G->adj[v] = NEWedge(v, G->adj[v]);
-        G->adj[v] = NEWedge(v, NULL);
+        G->vert[v] = *NEWvert(v);
     }
     return G;
 }
 /* REPRESENTAÇÃO POR LISTAS DE ADJACÊNCIA: A função GRAPHinsertArc() insere um arco v-w no grafo G. A função supõe que v e w são distintos, positivos e menores que G->V. Se o grafo já tem um arco v-w, a função não faz nada. */
 void GRAPHinsertEdge( Graph G, vertex v, vertex w) {
     link a;
+    
+    G->vert[v].adjList;
+    
     for (a = G->adj[v]; a != NULL; a = a->next)
         if (a->w == w) return;
     G->adj[v] = NEWedge(w, G->adj[v]);
