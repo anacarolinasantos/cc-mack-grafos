@@ -38,7 +38,7 @@ typedef struct {
 
 //MARK: - Métodos do grafo
 /* A função NEWnode() recebe um vértice w e o endereço next de um nó e devolve o endereço a de um novo nó tal que a->w == w e a->next == next. */
-static link NEWnode( vertex w, link next) {
+static link NEWedge( vertex w, link next) {
     link a = malloc( sizeof (struct node));
     a->w = w;
     a->next = next;
@@ -52,8 +52,10 @@ Graph GRAPHinit( int V) {
     G->V = V;
     G->A = 0;
     G->adj = malloc( V * sizeof (link));
-    for (v = 0; v < V; v++)
-        G->adj[v] = NULL;
+    for (v = 0; v < V; v++){
+//        G->adj[v] = NEWedge(v, G->adj[v]);
+        G->adj[v] = NEWedge(v, NULL);
+    }
     return G;
 }
 /* REPRESENTAÇÃO POR LISTAS DE ADJACÊNCIA: A função GRAPHinsertArc() insere um arco v-w no grafo G. A função supõe que v e w são distintos, positivos e menores que G->V. Se o grafo já tem um arco v-w, a função não faz nada. */
@@ -61,7 +63,7 @@ void GRAPHinsertEdge( Graph G, vertex v, vertex w) {
     link a;
     for (a = G->adj[v]; a != NULL; a = a->next)
         if (a->w == w) return;
-    G->adj[v] = NEWnode(w, G->adj[v]);
+    G->adj[v] = NEWedge(w, G->adj[v]);
     G->A++;
 }
 
@@ -143,6 +145,8 @@ void searchOnWidth(Graph G, vertex s) {
         }
     }
     
+    printf("%d %d %d \n", G->adj[0]->colorNode, G->adj[0]->distance, G->adj[1]->w);
+    
     G->adj[s]->colorNode = gray;
     G->adj[s]->distance = 0;
     G->adj[s]->parent = NULL;
@@ -157,12 +161,14 @@ void searchOnWidth(Graph G, vertex s) {
         nextVertex = G->adj[nodeQ->num];
         
         while (nextVertex != NULL) {
-            
+            printf("ANTES DO IF vértice: %d - aresta com: %d , cor: %d\n", nodeQ->num, nextVertex->w, nextVertex->colorNode);
             if (nextVertex->colorNode == white) {
                 
+                printf("DEPOIS DO IF vértice: %d - aresta com: %d \n", nodeQ->num, nextVertex->w);
 //                printf("%d\n", G->adj[nodeQ->num]->distance);
                 
                 //Mudando na lista ligada
+                
                 nextVertex->colorNode = gray;
                 nextVertex->distance = G->adj[nodeQ->num]->distance+1;
                 nextVertex->parent = G->adj[nodeQ->num];
@@ -218,10 +224,13 @@ int main(int argc, const char * argv[]) {
     GRAPHinsertEdge(g, 4, 5);
     GRAPHinsertEdge(g, 5, 4);
     
+    for (i = 0; i < g->V; i++) {
+        printf("%d\n",g->adj[i]->w);
+    }
     searchOnWidth(g, 0);
     
-    for (; i < g->V; i++) {
-        printf("%d \n", g->adj[i]->distance);
+    for (i = 0; i < g->V; i++) {
+        printf("distancia: %d do vértice: %d \n", g->adj[i]->distance, i);
     }
     
     
