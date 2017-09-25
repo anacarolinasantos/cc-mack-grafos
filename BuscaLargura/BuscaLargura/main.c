@@ -189,7 +189,6 @@ void searchOnWidth(Graph G, vertex s) {
             
             if (G->vert[currentEdge->w]->colorVert == white) {
                 
-                //Mudando na lista ligada
                 G->vert[currentEdge->w]->colorVert = gray;
                 G->vert[currentEdge->w]->distance = currentVertex->distance+1;
                 G->vert[currentEdge->w]->parent = G->vert[nodeQ->num];
@@ -228,8 +227,6 @@ int main(int argc, const char * argv[]) {
     GRAPHinsertEdge(g, 5, 3);
     GRAPHinsertEdge(g, 5, 4);
 
-
-    
 //    GRAPHinsertEdge(g, 0, 1);
 //    GRAPHinsertEdge(g, 0, 2);
 //    GRAPHinsertEdge(g, 1, 0);
@@ -250,7 +247,6 @@ int main(int argc, const char * argv[]) {
     for (i = 0; i < g->V; i++) {
         printf("distancia: %d até o vértice: %d \n", g->vert[i]->distance, i);
     }
-    
     
     return 0;
 }
