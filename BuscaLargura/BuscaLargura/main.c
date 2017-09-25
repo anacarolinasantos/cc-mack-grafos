@@ -41,7 +41,7 @@ struct vert {
     link *adjList;
 };
 
-/**/
+/*The graph is composed by the number of vertices, edges and a list of all vertices*/
 typedef struct {
     int V;
     int A;
@@ -49,9 +49,9 @@ typedef struct {
 } *Graph;
 
 //MARK: - Graph methods
-/**/
-static link NEWedge( vertex w, link next) {
-    link a = malloc( sizeof (struct node));
+/*The method insert a new edge on the graph, creating a node with the identifier w, and putting this node at the begging of the list*/
+static link NEWedge(vertex w, link next) {
+    link a = malloc(sizeof (struct node));
     a->w = w;
     a->next = next;
     return a;
@@ -212,19 +212,38 @@ int main(int argc, const char * argv[]) {
     g = GRAPHinit(6);
     
     GRAPHinsertEdge(g, 0, 1);
-    GRAPHinsertEdge(g, 0, 2);
+    GRAPHinsertEdge(g, 0, 3);
+    GRAPHinsertEdge(g, 0, 4);
     GRAPHinsertEdge(g, 1, 0);
     GRAPHinsertEdge(g, 1, 2);
-    GRAPHinsertEdge(g, 1, 3);
-    GRAPHinsertEdge(g, 2, 0);
     GRAPHinsertEdge(g, 2, 1);
-    GRAPHinsertEdge(g, 2, 3);
-    GRAPHinsertEdge(g, 3, 1);
-    GRAPHinsertEdge(g, 3, 2);
+    GRAPHinsertEdge(g, 2, 5);
+    GRAPHinsertEdge(g, 3, 0);
     GRAPHinsertEdge(g, 3, 4);
+    GRAPHinsertEdge(g, 3, 5);
+    GRAPHinsertEdge(g, 4, 0);
     GRAPHinsertEdge(g, 4, 3);
     GRAPHinsertEdge(g, 4, 5);
+    GRAPHinsertEdge(g, 5, 2);
+    GRAPHinsertEdge(g, 5, 3);
     GRAPHinsertEdge(g, 5, 4);
+
+
+    
+//    GRAPHinsertEdge(g, 0, 1);
+//    GRAPHinsertEdge(g, 0, 2);
+//    GRAPHinsertEdge(g, 1, 0);
+//    GRAPHinsertEdge(g, 1, 2);
+//    GRAPHinsertEdge(g, 1, 3);
+//    GRAPHinsertEdge(g, 2, 0);
+//    GRAPHinsertEdge(g, 2, 1);
+//    GRAPHinsertEdge(g, 2, 3);
+//    GRAPHinsertEdge(g, 3, 1);
+//    GRAPHinsertEdge(g, 3, 2);
+//    GRAPHinsertEdge(g, 3, 4);
+//    GRAPHinsertEdge(g, 4, 3);
+//    GRAPHinsertEdge(g, 4, 5);
+//    GRAPHinsertEdge(g, 5, 4);
     
     searchOnWidth(g, 0);
     
