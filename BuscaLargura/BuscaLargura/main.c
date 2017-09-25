@@ -2,10 +2,13 @@
 //Michelle Faifer dos Santos, TIA: 31581463
 //Piera Carolina Marchesini Dutra, TIA: 31581773
 
-//COMENTARIOS EM INGLES
-
-//Fonte Lista Ligada e métodos de inserção de aresta e criação do grafo: https://www.ime.usp.br/~pf/algoritmos_para_grafos/aulas/graphdatastructs.html
-//Fonte Fila: http://www.cprogressivo.net/2014/05/Filas-em-C-Como-Programar-Tutorial-Estrutura-de-Dados-Dinamica-Queue.html
+/*Source to adjacency list and insertion methods of edges and graph creation:
+ https://www.ime.usp.br/~pf/algoritmos_para_grafos/aulas/graphdatastructs.html
+*/
+ 
+/*Source to Queue:
+ http://www.cprogressivo.net/2014/05/Filas-em-C-Como-Programar-Tutorial-Estrutura-de-Dados-Dinamica-Queue.html
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,37 +16,40 @@
 
 #define vertex int
 
-//MARK: - Métodos de Lista Ligada
+//Enumeration to define vetices' colors
 enum color {
     white = 0,
     gray = 1,
     black = 2
 };
 
+//MARK: - Adjacency list methods
+/**/
 typedef struct node *link;
 struct node {
     vertex w;
     link next;
 };
 
-typedef struct vert vert;
+/*The graph is formed by vertices, that have all the information that belong to it (the identifier, distance to get to the vertex, color, the parent -that is the antecessor to get to the vertex- and a list of all the vertexes adjacent)*/
+typedef struct vert *vert;
 struct vert {
     vertex v;
     int distance;
     enum color colorVert;
-    vertex parent;
+    vert parent;
     link *adjList;
 };
 
-/* A lista de adjacência de um vértice v é composta por nós do tipo node. Cada nó da lista corresponde a um arco e contém um vizinho w de v e o endereço do nó seguinte da lista. Um link é um ponteiro para um node. */
+/**/
 typedef struct {
     int V;
     int A;
     vert *vert;
 } *Graph;
 
-//MARK: - Métodos do grafo
-/* A função NEWnode() recebe um vértice w e o endereço next de um nó e devolve o endereço a de um novo nó tal que a->w == w e a->next == next. */
+//MARK: - Graph methods
+/**/
 static link NEWedge( vertex w, link next) {
     link a = malloc( sizeof (struct node));
     a->w = w;
@@ -51,38 +57,43 @@ static link NEWedge( vertex w, link next) {
     return a;
 }
 
-vert* NEWvert(vertex v){
-    vert* vertG = (vert*) malloc(sizeof(vert));
+/**/
+static vert NEWvert(vertex v){
+    vert vertG = malloc(sizeof(vert));
     vertG->v = v;
-    vertG->adjList = NULL;
+    vertG->adjList = (link*) malloc(sizeof (link));;
     return vertG;
 }
 
-/* REPRESENTAÇÃO POR LISTAS DE ADJACÊNCIA: A função GRAPHinit() constrói um grafo com vértices 0 1 .. V-1 e nenhum arco. */
-Graph GRAPHinit( int V) {
+/**/
+Graph GRAPHinit(int V) {
     vertex v;
-    Graph G = malloc( sizeof *G);
+    Graph G = malloc(sizeof *G);
     G->V = V;
     G->A = 0;
+    G->vert = malloc( V * sizeof (link));
     
     for (v = 0; v < V; v++){
-        G->vert[v] = *NEWvert(v);
+        G->vert[v] = NEWvert(v);
     }
+    
     return G;
 }
-/* REPRESENTAÇÃO POR LISTAS DE ADJACÊNCIA: A função GRAPHinsertArc() insere um arco v-w no grafo G. A função supõe que v e w são distintos, positivos e menores que G->V. Se o grafo já tem um arco v-w, a função não faz nada. */
+
+/**/
 void GRAPHinsertEdge( Graph G, vertex v, vertex w) {
     link a;
     
-    G->vert[v].adjList;
-    
-    for (a = G->adj[v]; a != NULL; a = a->next)
+    for (a = G->vert[v]->adjList[0]; a != NULL; a = a->next)
         if (a->w == w) return;
-    G->adj[v] = NEWedge(w, G->adj[v]);
+    
+    G->vert[v]->adjList[0] = NEWedge(w, G->vert[v]->adjList[0]);
+    
     G->A++;
 }
 
-//MARK: - Métodos de fila
+//MARK: - Queue methods
+/**/
 struct NodeQueue{
     int num;
     struct NodeQueue *next;
@@ -95,6 +106,7 @@ void initialize(nodeQueue *Queue) {
     size=0;
 }
 
+/**/
 int isEmpty(nodeQueue *Queue){
     if(Queue->next == NULL)
         return 1;
@@ -102,6 +114,7 @@ int isEmpty(nodeQueue *Queue){
         return 0;
 }
 
+/**/
 nodeQueue *allocate(vertex num) {
     nodeQueue *new=(nodeQueue *) malloc(sizeof(nodeQueue));
     if(!new){
@@ -113,6 +126,7 @@ nodeQueue *allocate(vertex num) {
     }
 }
 
+/**/
 void insert(nodeQueue *Queue, vertex num) {
     nodeQueue *new=allocate(num);
     new->next = NULL;
@@ -130,7 +144,7 @@ void insert(nodeQueue *Queue, vertex num) {
     size++;
 }
 
-
+/**/
 nodeQueue *removeQueue(nodeQueue *Queue) {
     if(Queue->next == NULL){
         printf("Fila ja esta vazia\n");
@@ -144,86 +158,59 @@ nodeQueue *removeQueue(nodeQueue *Queue) {
     
 }
 
+/**/
 void searchOnWidth(Graph G, vertex s) {
-    link nextVertex;
+    vert currentVertex;
+    link currentEdge;
     vertex v;
     nodeQueue *queue = (nodeQueue *) malloc(sizeof(nodeQueue));
     
     for (v = 0; v < G->V; v++){
-        nextVertex = G->adj[v];
-        while (nextVertex != NULL) {
-            nextVertex->distance = INT_MAX;
-            nextVertex->colorNode = white;
-            nextVertex->parent = NULL;
-            
-            nextVertex = nextVertex->next;
-        }
+        currentVertex = G->vert[v];
+        currentVertex->distance = INT_MAX;
+        currentVertex->colorVert = white;
+        currentVertex->parent = NULL;
     }
     
-    printf("%d %d %d \n", G->adj[0]->colorNode, G->adj[0]->distance, G->adj[1]->w);
-    
-    G->adj[s]->colorNode = gray;
-    G->adj[s]->distance = 0;
-    G->adj[s]->parent = NULL;
+    G->vert[s]->colorVert = gray;
+    G->vert[s]->distance = 0;
+    G->vert[s]->parent = NULL;
     
     initialize(queue);
     insert(queue, s);
     
     while (!isEmpty(queue)) {
-        
         nodeQueue *nodeQ = removeQueue(queue);
         
-        nextVertex = G->adj[nodeQ->num];
+        currentVertex = G->vert[nodeQ->num];
+        currentEdge = currentVertex->adjList[0];
         
-        while (nextVertex != NULL) {
-            printf("ANTES DO IF vértice: %d - aresta com: %d , cor: %d\n", nodeQ->num, nextVertex->w, nextVertex->colorNode);
-            if (nextVertex->colorNode == white) {
-                
-                printf("DEPOIS DO IF vértice: %d - aresta com: %d \n", nodeQ->num, nextVertex->w);
-//                printf("%d\n", G->adj[nodeQ->num]->distance);
+        while (currentEdge != NULL) {
+            
+            if (G->vert[currentEdge->w]->colorVert == white) {
                 
                 //Mudando na lista ligada
+                G->vert[currentEdge->w]->colorVert = gray;
+                G->vert[currentEdge->w]->distance = currentVertex->distance+1;
+                G->vert[currentEdge->w]->parent = G->vert[nodeQ->num];
                 
-                nextVertex->colorNode = gray;
-                nextVertex->distance = G->adj[nodeQ->num]->distance+1;
-                nextVertex->parent = G->adj[nodeQ->num];
-                
-                //Mudando o adj de fato
-                G->adj[nextVertex->w]->colorNode = gray;
-                G->adj[nextVertex->w]->distance = nextVertex->distance;
-                G->adj[nextVertex->w]->parent = nextVertex->parent;
-                
-//                nextVertex->distance = G->adj[nextVertex->w]->distance+1;
-//                nextVertex->distance = G->adj[nextVertex->w]->distance+1;
-//                nextVertex->parent = G->adj[nodeQ->num];
-                
-                insert(queue, nextVertex->w);
+                insert(queue, currentEdge->w);
             }
-            nextVertex = nextVertex->next;
+            currentEdge = currentEdge->next;
         }
         
-        G->adj[nodeQ->num]->colorNode = black;
+        G->vert[nodeQ->num]->colorVert = black;
     }
     
 }
 
-
+/**/
 int main(int argc, const char * argv[]) {
     Graph g;
     int i = 0;
     
     g = GRAPHinit(6);
     
-    //Arestas sem repetição
-//    GRAPHinsertEdge(g, 0, 1);
-//    GRAPHinsertEdge(g, 0, 2);
-//    GRAPHinsertEdge(g, 1, 2);
-//    GRAPHinsertEdge(g, 2, 3);
-//    GRAPHinsertEdge(g, 1, 3);
-//    GRAPHinsertEdge(g, 3, 4);
-//    GRAPHinsertEdge(g, 4, 5);
-    
-    //Arestas repetidas
     GRAPHinsertEdge(g, 0, 1);
     GRAPHinsertEdge(g, 0, 2);
     GRAPHinsertEdge(g, 1, 0);
@@ -239,13 +226,10 @@ int main(int argc, const char * argv[]) {
     GRAPHinsertEdge(g, 4, 5);
     GRAPHinsertEdge(g, 5, 4);
     
-    for (i = 0; i < g->V; i++) {
-        printf("%d\n",g->adj[i]->w);
-    }
     searchOnWidth(g, 0);
     
     for (i = 0; i < g->V; i++) {
-        printf("distancia: %d do vértice: %d \n", g->adj[i]->distance, i);
+        printf("distancia: %d até o vértice: %d \n", g->vert[i]->distance, i);
     }
     
     
